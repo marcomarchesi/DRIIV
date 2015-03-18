@@ -45,8 +45,9 @@
       // body components
       var container, content;
 
-      var SUN_LIGHT = 0xffa573;
+      var SUN_LIGHT = 0xffffff;
       var RAIN_LIGHT = 0x5596E6;
+      var STEP_DELTA = 0.5;
 
       var textContainer;
 
@@ -66,10 +67,10 @@
       var clock = new THREE.Clock();
       var delta;
 
-      var pathEnabled = false; // set to true for runner camera; can be changed at runtime pressing shift
+      var pathEnabled = true; // set to true for runner camera; can be changed at runtime pressing shift
 
       // is it raining?
-      var isRaining = false;
+      var isRaining = true;
       var rain;
 
       var cube;
@@ -105,7 +106,7 @@
 
       // setup the control object for the control gui
       controlGUI = new function() {
-          this.oculusEnabled = true;
+          this.oculusEnabled = false;
       };
       addControlGui(controlGUI);
 
@@ -140,7 +141,7 @@
 
       // create a render, sets the background color and the size
       renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
-      renderer.setClearColor( 0xa7fae6, 1 );
+      renderer.setClearColor( 0xffffff, 1 );
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMapEnabled = true;
 
@@ -149,13 +150,43 @@
       oculusRenderer = new THREE.OculusRiftEffect( renderer, {worldScale: 100} );
       oculusRenderer.setSize( window.innerWidth, window.innerHeight );
 
-      //add track
-      var sampleClosedSpline = new THREE.ClosedSplineCurve3( [
-        new THREE.Vector3(2,0,-2),
-        new THREE.Vector3(2,0,2),
-        new THREE.Vector3(-2,0,2),
-        new THREE.Vector3(-2,0,-2),
-      ] );
+var sampleClosedSpline = new THREE.ClosedSplineCurve3( [
+new THREE.Vector3(-53.8,131.31,229.27),
+new THREE.Vector3(-77.04,131.31,180.54),
+new THREE.Vector3(-107.6,131.31,139.56),
+new THREE.Vector3(-150.52,131.31,108.83),
+new THREE.Vector3(-192.89,131.31,78.41),
+new THREE.Vector3(-210.58,131.31,52.34),
+new THREE.Vector3(-216.17,131.31,8.88),
+new THREE.Vector3(-212.92,131.31,-49.34),
+new THREE.Vector3(-203.54,131.31,-93.04),
+new THREE.Vector3(-186.98,131.31,-141.77),
+new THREE.Vector3(-158.17,131.31,-192.53),
+new THREE.Vector3(-122.89,131.31,-232.17),
+new THREE.Vector3(-70.43,131.31,-262.12),
+new THREE.Vector3(-9.8,131.31,-278.78),
+new THREE.Vector3(24.31,131.31,-259.5),
+new THREE.Vector3(39.81,131.31,-219.58),
+new THREE.Vector3(52.22,131.31,-181.61),
+new THREE.Vector3(80.15,131.31,-169.5),
+new THREE.Vector3(104.21,131.31,-177.8),
+new THREE.Vector3(139.71,131.31,-218.03),
+new THREE.Vector3(168.33,131.31,-244.88),
+new THREE.Vector3(204.36,131.31,-243.81),
+new THREE.Vector3(238.33,131.31,-221.02),
+new THREE.Vector3(266.01,131.31,-177.76),
+new THREE.Vector3(273.77,131.31,-125.37),
+new THREE.Vector3(270.66,131.31,-96.14),
+new THREE.Vector3(255.14,131.31,-68.72),
+new THREE.Vector3(231.34,131.31,-53.2),
+new THREE.Vector3(176.48,136.09,-39.31),
+new THREE.Vector3(129.9,131.31,-20.76),
+new THREE.Vector3(102.94,131.31,6.0),
+new THREE.Vector3(78.01,146.26,62.61),
+new THREE.Vector3(64.72,131.31,208.12),
+new THREE.Vector3(43.48,131.31,243.46),
+new THREE.Vector3(-13.28,131.31,262.28),
+] );
 
       // create cameras.
       // PathCamera will follow the defined path and be controlled by PathCamera.js
@@ -207,7 +238,7 @@
         rain.start();
 
       // lights
-      light = new THREE.SpotLight(0xffa573);
+      light = new THREE.SpotLight(0xffffff);
       light.position.set(0, 10, 50);
       light.shadowCameraNear = 50;
       light.shadowMapWidth = 1024;
@@ -226,7 +257,7 @@
         ambientLightColor = SUN_LIGHT;
 
       // add fog
-      scene.fog = new THREE.FogExp2( 0xFFFFFF, 0.1);
+      scene.fog = new THREE.FogExp2( 0xFFFFFF, 0.002);
 
       // load scene model
       loader = new THREE.JSONLoader();
@@ -265,14 +296,14 @@
 
       // updating the position and orientation of the camera
       if ( controls.moveForward ) {
-        path.takeStep(step, step+2, 400, controlGUI.oculusEnabled);
-        step += 2;
+        path.takeStep(step, step+STEP_DELTA, 400, controlGUI.oculusEnabled);
+        step += STEP_DELTA;
       }
         
       if ( controls.moveBackward ) {
         if(step > 0) {
-          path.takeStep(step, step-2, 400, controlGUI.oculusEnabled);
-          step -= 2; 
+          path.takeStep(step, step-STEP_DELTA, 400, controlGUI.oculusEnabled);
+          step -= STEP_DELTA; 
         }
       }
 
@@ -321,7 +352,7 @@
         function(model,materials){
           scene_mesh = new THREE.Mesh(model,new THREE.MeshFaceMaterial( materials ));
           scene_mesh.name = 'scene';
-          scene_mesh.rotation.y = Math.PI;
+          // scene_mesh.rotation.y = Math.PI;
           scene_mesh.receiveShadow = true;
           scene_mesh.castShadow = true;
           scene.add(scene_mesh);
