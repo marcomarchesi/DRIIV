@@ -162,10 +162,10 @@ THREE.DK2Controls = function(camera) {
     if (this.moveDown)
       this.controller.translateY( - this.translationSpeed * delta );
     
-    // update the position of the camera ONLY if pathEnabled == false. Otherwise the camare will follow the path.
-    if(!pathEnabled) {
-      this.camera.position.addVectors(this.controller.position, this.headPos);
-    }
+    // // update the position of the camera ONLY if pathEnabled == false. Otherwise the camare will follow the path.
+    // if(!pathEnabled) {
+    //   this.camera.position.addVectors(this.controller.position, this.headPos);
+    // }
 
     if (this.camera.position.y < -10) {
         this.camera.position.y = -10;
