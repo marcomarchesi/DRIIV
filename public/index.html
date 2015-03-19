@@ -34,8 +34,6 @@
     <script type="text/javascript" src="js/OculusRiftEffect_HUD.js"></script>
     <script type="text/javascript" src="js/PathCamera.js"></script>
     <script type="text/javascript" src="js/DK2Controls.js"></script>
-    <script type="text/javascript" src="js/dat.gui.min.js"></script>
-    <script src="js/socket.io.js"></script>
     <script type="text/javascript">
 
       //Global variables.
@@ -46,18 +44,19 @@
 
       var SUN_LIGHT = 0xffffff;
       var RAIN_LIGHT = 0x5596E6;
-      var STEP_DELTA = 0.5;
+      var STEP_DELTA = 0.4;
 
       var textContainer;
 
       var scene, renderer, controls;
-      var camera, pathCamera;
+      var pathCamera;
       var HUDscene, HUDcamera;
 
       var path;
       var step = 0;         // camera step
 
       var scene_mesh;
+      var logo_mesh;
       var light;
       var ambientLightColor = SUN_LIGHT;
 
@@ -166,7 +165,8 @@ new THREE.Vector3(-13.28,131.31,262.28),
 
       // create cameras.
       // PathCamera will follow the defined path and be controlled by PathCamera.js
-      // camera is the normal camera and  will be controlled by FirstPersonControls.js/DK2Controls.js
+      // camera is a debug camera
+
       pathCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 1000 );
 
       path = new PathCamera(pathCamera, sampleClosedSpline);
@@ -249,21 +249,22 @@ new THREE.Vector3(-13.28,131.31,262.28),
     function render(dt) {
 
       // updating the position and orientation of the camera
-      if ( controls.moveForward ) {
+      // if ( controls.moveForward ) {
         path.takeStep(step, step+STEP_DELTA, 400, isOculusEnabled);
         step += STEP_DELTA;
-      }
+      // }
         
-      if ( controls.moveBackward ) {
-        if(step > 0) {
-          path.takeStep(step, step-STEP_DELTA, 400, isOculusEnabled);
-          step -= STEP_DELTA; 
-        }
-      }
+      // if ( controls.moveBackward ) {
+      //   if(step > 0) {
+      //     path.takeStep(step, step-STEP_DELTA, 400, isOculusEnabled);
+      //     step -= STEP_DELTA; 
+      //   }
+      // }
 
       delta = clock.getDelta();
 
       controls.update(delta);
+
       // ---
 
       // used in PathCamera
@@ -306,10 +307,20 @@ new THREE.Vector3(-13.28,131.31,262.28),
         function(model,materials){
           scene_mesh = new THREE.Mesh(model,new THREE.MeshFaceMaterial( materials ));
           scene_mesh.name = 'scene';
-          // scene_mesh.rotation.y = Math.PI;
           scene_mesh.receiveShadow = true;
           scene_mesh.castShadow = true;
           scene.add(scene_mesh);
+        });
+
+        loader.load("./models/logo.js",
+        function(model,materials){
+          logo_mesh = new THREE.Mesh(model,new THREE.MeshFaceMaterial( materials ));
+          logo_mesh.name = 'logo';
+          logo_mesh.receiveShadow = true;
+          logo_mesh.castShadow = true;
+          scene.add(logo_mesh);
+          logo_mesh.position = new THREE.Vector3(-53,131,229);
+          logo_mesh.scale = new THREE.Vector3(10,10,10);
         });
     }
     

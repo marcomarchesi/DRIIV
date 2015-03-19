@@ -45,7 +45,7 @@ function PathCamera(camera,curve) {
 
       var direction = this.path.parameters.path.getTangentAt( t );
 
-      this.normal = new THREE.Vector3( 0, 1, 0 );
+      this.normal = new THREE.Vector3( -0.2, 1, 0 );
       // We move on a offset on its binormal
 
       position.add( this.normal.clone().multiplyScalar( this.offset ) ); 
@@ -60,10 +60,10 @@ function PathCamera(camera,curve) {
         lookAt.copy( position ).add( direction );
 
       // if oculusEnabled we don't have to do that beacuse the oculus controls (DK2Controls) will the the camere where to look at.
-      // if(!oculusEnabled) {
+      if(!oculusEnabled) {
         this.pathCamera.matrix.lookAt(this.pathCamera.position, lookAt, this.normal);
         this.pathCamera.rotation.setFromRotationMatrix( this.pathCamera.matrix, this.pathCamera.rotation.order );
-      // }
+      }
 
     };
 
